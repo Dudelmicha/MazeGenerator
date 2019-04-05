@@ -10,11 +10,10 @@ public class Main {
 
 
 	public static void main(String[] args) {
-		Generator generator = new Generator();
+		GeneratorWithoutDoors generator = new GeneratorWithoutDoors();
 		
 		Map map = generator.createEmptyMap();
-		for (int j = 0; j < 1000; j++)
-			generator.cave(map,j);
+		generator.fillMap(map);
 		generator.printMap(map);
 		MainWindow mw = new MainWindow(generator, map);
 	}

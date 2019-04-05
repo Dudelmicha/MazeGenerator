@@ -21,7 +21,7 @@ public class MainWindow {
 	private JPanel mainPanel;
 	private JScrollPane mapView;
 	private Map currentMap;
-	public MainWindow(Generator generator, Map map) {
+	public MainWindow(GeneratorWithoutDoors generator, Map map) {
 		currentMap = map;
 		mapView = createMapView(currentMap); 
 		mainPanel = new JPanel(new GridLayout(1, 1));
@@ -33,8 +33,7 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent e) {
 				mainPanel.removeAll();
 				currentMap = new Map(currentMap.getM(), currentMap.getRooms().stream().filter(x -> x.isMarked())); 
-				for (int j = 0; j < 1000; j++)
-					generator.cave(currentMap,j);
+				generator.fillMap(currentMap);
 				generator.printMap(currentMap);
 				mapView = createMapView(currentMap); 
 				mainPanel.add(mapView,0,0);
@@ -63,7 +62,7 @@ public class MainWindow {
 		{
 			for(int x=0; x<width; x++)
 			{
-				char symbol = (char)map.getM()[y][x];
+				char symbol = map.getM()[y][x].getSymbol();
 				TileButton button = new TileButton(map,x,y,symbol);
 				buttons[y][x] = button;
 				button.setSize(32,32);

@@ -8,14 +8,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Map {
-	private int[][] m;
+	private Tile[][] m;
 	private List<Room> rooms = new ArrayList<Room>();
 
-	public int[][] getM() {
+	public Tile[][] getM() {
 		return m;
 	}
 
-	public void setM(int[][] m) {
+	public void setM(Tile[][] m) {
 		this.m = m;
 	}
 
@@ -28,16 +28,21 @@ public class Map {
 	}
 
 	
-	public Map(int[][] m) {
+	public Map(Tile[][] m) {
 		super();
 		this.m = m;
 	}
 	
-	public Map(int[][] m, List<Room> rooms) {
-		this(new int[m.length][m[0].length]);
-		for (int[] col : this.m) {
-			Arrays.setAll(col, x -> ' ');	
+	public Map(Tile[][] m, List<Room> rooms) {
+		this(new Tile[m.length][m[0].length]);
+		for(int y=0; y<m.length; y++)
+		{
+			for(int x=0; x<m[y].length; x++)
+			{
+				m[y][x] = new Tile(this,x,y);
+			}
 		}
+		
 		
 		for(Room room : rooms)
 		{
@@ -50,12 +55,17 @@ public class Map {
 		this.rooms = rooms;
 	}
 
-	public Map(int[][] m, Stream<Room> filter) {
+	public Map(Tile[][] m, Stream<Room> filter) {
 		this(m, filter.collect(Collectors.toList()));
 	}
 
 	public void addRoom(Room room) {
 		this.rooms.add(room);
+		for (int y = room.getU() ; y < room.getU() + room.getH() ; y++) {
+			for (int x = room.getT() ; x < room.getT() + room.getW() ; x++) {
+				room.addTile(this.m[y][x]);
+			}
+		}
 	}
 
 	public void addRoom(int w, int h, int t, int u) {

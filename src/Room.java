@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Room {
 	private Map map;
@@ -6,6 +9,9 @@ public class Room {
 	private int t;
 	private int u;
 	private boolean marked;
+	private ArrayList<Tile> walls = new ArrayList<Tile>();
+	private Set<Tile> doors = new HashSet<Tile>();
+	private ArrayList<Tile> tiles = new ArrayList<Tile>();
 	public int getW() {
 		return w;
 	}
@@ -45,5 +51,24 @@ public class Room {
 	public void setMarked(boolean marked) {
 		this.marked = marked;
 	}
+	public void addWall(Tile wall) {
+		walls.add(wall);
+	}
 	
+	public ArrayList<Tile> getWalls() {
+		return walls;
+	}
+	public void addDoor(Tile newDoor) {
+		walls.remove(newDoor);
+		doors.add(newDoor);
+	}
+	public Set<Tile> getDoors() {
+		return doors;
+	}
+	public void addTile(Tile tile) {
+		tiles.add(tile);
+	}
+	public ArrayList<Tile> getTiles() {
+		return tiles;
+	}
 }
