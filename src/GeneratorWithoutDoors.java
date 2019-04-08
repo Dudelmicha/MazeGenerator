@@ -196,7 +196,7 @@ public class GeneratorWithoutDoors {
 			}
 		}
 		boolean waysAdded = false;
-		do
+		M1:do
 		{
 		GraphBuilder<Tile, Integer> builder = GraphBuilder.<Tile,Integer>create();
 		Set<Tile> allDoors = new HashSet<Tile>();
@@ -216,7 +216,7 @@ public class GeneratorWithoutDoors {
 		HipsterGraph<Tile, Integer> graph = builder.createUndirectedGraph();
 		
 			waysAdded = false;
-			M1:for (Tile door : allDoors) {
+			for (Tile door : allDoors) {
 				SearchProblem<Integer, Tile, WeightedNode<Integer, Tile, Double>> p = GraphSearchProblem
                         .startingFrom(door)
                         .in(graph)
@@ -228,13 +228,13 @@ public class GeneratorWithoutDoors {
 		                Algorithm<Integer, Tile, WeightedNode<Integer, Tile, Double>>.SearchResult result = Hipster.createAStar(p).search(door2);
 		                
 		                int directWayFCost = door.getDistance(door2);
-		                if(result.getGoalNode().getCost() > directWayFCost*2.5 ) {
-		                	System.out.println(directWayFCost*3);
-		                	System.out.println((int)Math.round(result.getGoalNode().getCost()));
+		                if(result.getGoalNode().getCost() > directWayFCost*2 && directWayFCost > 10) {
+		                	System.out.println("directWayFCost"+directWayFCost*3);
+		                	System.out.println("indirectWayFCost"+(int)Math.round(result.getGoalNode().getCost()));
 		                	
 		                	waysAdded = true;
 		                	Room newFloor = buildWay(map,door,door2);
-		                	break M1;
+		                	continue M1;
 		                }
 					}
 				}
@@ -269,29 +269,29 @@ public class GeneratorWithoutDoors {
 		boolean outside = false;
 		List<Tile> newRoomTiles = new ArrayList<Tile>();
 		Room newRoom = new Room(map);
+		
 		for (Tile tile : way) {
 			newRoomTiles.add(tile);
+			tile.setSymbol('W');
 			if(tile.getSymbol()=='#')
 			{
 				if(outside)
 				{					
-					tile.setSymbol('I');
 					break;
 				}
 				else
 				{
-					tile.setSymbol('O');
 					outside = true;
 				}
 			}
-			else
-			{
-				tile.setSymbol('W');
-				
-				
-			}
+		}
+		Set<Room> connectedRooms = way.stream().flatMap(x->x.getNeighbours().stream().map(y -> y.getRoom())).collect(Collectors.toSet());
+		connectedRooms.removeIf(x->x == null);
+		if(connectedRooms.size()<2) {
+			return null;
 		}
 		List<Tile> newWalls = new ArrayList<Tile>();
+		//retrieve actual startroom (might have stopped early, because of other room in between
 		Tile startDoor = newRoomTiles.get(0);
 		Tile endDoor = newRoomTiles.get(newRoomTiles.size()-1);
 		List<Tile> startRoomTiles = startDoor.getNeighbours();
@@ -300,6 +300,7 @@ public class GeneratorWithoutDoors {
 		endRoomTiles.removeIf(x -> x.getRoom() == null);
 		startRoom = startRoomTiles.get(0).getRoom();
 		endRoom = endRoomTiles.get(0).getRoom();
+		
 		newRoomTiles.forEach(
 				tile -> 
 				{

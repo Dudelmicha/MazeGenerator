@@ -45,7 +45,8 @@ public class Room {
 		this.u = u;
 	}
 	public Room(Map map) {
-		
+		super();
+		this.map = map;
 	}
 	public boolean isMarked() {
 		return marked;
