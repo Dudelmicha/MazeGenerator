@@ -12,6 +12,7 @@ public class Tile {
 		this.map = m;
 		this.x = x;
 		this.y = y;
+		this.symbol=' ';
 	}
 	public int getX() {
 		return x;

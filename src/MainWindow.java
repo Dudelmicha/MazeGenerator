@@ -69,12 +69,12 @@ public class MainWindow {
 				mapViewGrid.add(button);
 			}	
 		}
+		JScrollPane mapViewScroll = new JScrollPane(mapViewGrid);
 		for(Room room : map.getRooms())
 		{
-			for (int y = room.getU() - 1; y < room.getU() + room.getH() + 2; y++) {
-				for (int x = room.getT() - 1; x < room.getT() + room.getW() + 2; x++) {
-					final int curX = x;
-					final int curY = y;
+			for (Tile tile : room.getTiles()) {
+					final int x = tile.getX();;
+					final int y = tile.getY();
 					if(room.isMarked()) {
 						buttons[y][x].setBackground(Color.green);
 					}
@@ -87,7 +87,7 @@ public class MainWindow {
 						
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							buttons[curY][curX].onClick();
+							buttons[y][x].onClick();
 							mainPanel.removeAll();
 							mapView = createMapView(map); 
 							mainPanel.add(mapView,0,0);
@@ -100,8 +100,8 @@ public class MainWindow {
 					});
 				}
 			}
-		}
-		JScrollPane mapViewScroll = new JScrollPane(mapViewGrid);
+	
+	
 		
 		return mapViewScroll;
 	}
