@@ -1,7 +1,11 @@
+import level.Level;
+import level.Room;
+import level.Tile;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
+
 //This Generator iss derived from Link: https://gist.github.com/munificent/b1bcd969063da3e6c298be070a22b604
 public class Generator {
 	final static int H = 40;
@@ -17,7 +21,7 @@ public class Generator {
 		return rand.nextInt(x);
 	}
 
-		public void cave(Map map, int s) {
+		public void cave(Level map, int s) {
 			Tile[][] m = map.getM();
 			int w = g(10) + 5;
 			int h = g(6) + 3;
@@ -99,7 +103,7 @@ public class Generator {
 	}
 
 
-	public void printMap(Map map) {
+	public void printMap(Level map) {
 		System.out.println("--------------");
 		for (int y = 0; y < H; y++) {
 			for (int x = 0; x < W; x++) {
@@ -111,9 +115,9 @@ public class Generator {
 		}	
 	}
 	
-	public Map createEmptyMap() {
+	public Level createEmptyMap() {
 		Tile[][] m = new Tile[H][W];
-		Map map = new Map(m);
+		Level map = new Level(m);
 		for (int y = 0; y < H; y++) {
 			m[y] = new Tile[W];
 			for (int x = 0; x < W; x++) {

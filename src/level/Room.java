@@ -1,9 +1,11 @@
+package level;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Room {
-	private Map map;
+	private Level map;
 	private int w;
 	private int h;
 	private int t;
@@ -36,7 +38,7 @@ public class Room {
 	public void setU(int u) {
 		this.u = u;
 	}
-	public Room(Map map, int w, int h, int t, int u) {
+	public Room(Level map, int w, int h, int t, int u) {
 		super();
 		this.map = map;
 		this.w = w;
@@ -44,7 +46,7 @@ public class Room {
 		this.t = t;
 		this.u = u;
 	}
-	public Room(Map map) {
+	public Room(Level map) {
 		super();
 		this.map = map;
 	}

@@ -1,14 +1,17 @@
+import level.Level;
+import level.Room;
+
 import java.awt.Color;
 
 import javax.swing.JButton;
 
 public class TileButton extends JButton{
-	private Map map;
+	private Level map;
 	private Room room;
 	private int x;
 	private int y;
 	private char symbol;
-	public TileButton(Map map, int x, int y, char symbol) {
+	public TileButton(Level map, int x, int y, char symbol) {
 		super();
 		this.map = map;
 		this.x = x;

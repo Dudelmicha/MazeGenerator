@@ -1,20 +1,22 @@
+package level;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Map {
+public class Level {
 	private Tile[][] m;
 	private List<Room> rooms = new ArrayList<Room>();
 
+	public int width() { return m.length; }
+	public int height() { return m[0].length; }
+	public Tile tile(Coordinate c) { return m[c.y][c.x]; }
+
+	// data encapsulation!?
 	public Tile[][] getM() {
 		return m;
 	}
-
 	public void setM(Tile[][] m) {
 		this.m = m;
 	}
@@ -22,18 +24,25 @@ public class Map {
 	public List<Room> getRooms() {
 		return rooms;
 	}
-
 	public void setRooms(List<Room> rooms) {
 		this.rooms = rooms;
 	}
 
-	
-	public Map(Tile[][] m) {
+	public Level(int width, int height) {
+		m = new Tile[height][width];
+		for (int y = 0; y < height; y++) {
+			m[y] = new Tile[width];
+			for (int x = 0; x < width; x++) {
+				m[y][x] = new Tile(this, x, y);
+			}
+		}
+	}
+	public Level(Tile[][] m) {
 		super();
 		this.m = m;
 	}
 	
-	public Map(Tile[][] m, List<Room> rooms) {
+	public Level(Tile[][] m, List<Room> rooms) {
 		this(new Tile[m.length][m[0].length]);
 		for(int y=0; y<m.length; y++)
 		{
@@ -55,7 +64,7 @@ public class Map {
 		this.rooms = rooms;
 	}
 
-	public Map(Tile[][] m, Stream<Room> filter) {
+	public Level(Tile[][] m, Stream<Room> filter) {
 		this(m, filter.collect(Collectors.toList()));
 	}
 

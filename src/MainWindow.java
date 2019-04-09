@@ -1,27 +1,24 @@
+import level.Level;
+import level.Room;
+import level.Tile;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.RepaintManager;
 
 public class MainWindow {
 	private JFrame frame;
 	private JPanel mainPanel;
 	private JScrollPane mapView;
-	private Map currentMap;
-	public MainWindow(GeneratorWithoutDoors generator, Map map) {
+	private Level currentMap;
+	public MainWindow(GeneratorWithoutDoors generator, Level map) {
 		currentMap = map;
 		mapView = createMapView(currentMap); 
 		mainPanel = new JPanel(new GridLayout(1, 1));
@@ -32,7 +29,7 @@ public class MainWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainPanel.removeAll();
-				currentMap = new Map(currentMap.getM(), currentMap.getRooms().stream().filter(x -> x.isMarked())); 
+				currentMap = new Level(currentMap.getM(), currentMap.getRooms().stream().filter(x -> x.isMarked()));
 				generator.fillMap(currentMap);
 				generator.printMap(currentMap);
 				mapView = createMapView(currentMap); 
@@ -52,7 +49,7 @@ public class MainWindow {
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	private JScrollPane createMapView(Map map) {
+	private JScrollPane createMapView(Level map) {
 		int height = map.getM().length;
 		int width = map.getM()[0].length;
 		

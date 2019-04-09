@@ -1,19 +1,38 @@
+package level;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Tile {
-	private char symbol;
+	private char symbol; // pfui
+	private TileType type;
 	private int x;
 	private int y;
 	private Room room;
-	private Map map;
-	public Tile(Map m, int x, int y) {
+	private Level map;
+
+	public Tile(Level m, int x, int y) {
 		super();
 		this.map = m;
 		this.x = x;
 		this.y = y;
 		this.symbol=' ';
+		this.type = TileType.None;
 	}
+
+	public Coordinate position() { return new Coordinate(x,y); }
+	public boolean isTraversable() {
+		switch (this.type) {
+			case None:
+			case Wall:
+				return false;
+			case Floor:
+			case Door:
+				return true;
+		}
+		return false;
+	}
+
 	public int getX() {
 		return x;
 	}
@@ -26,12 +45,10 @@ public class Tile {
 	public void setY(int y) {
 		this.y = y;
 	}
-	public char getSymbol() {
-		return symbol;
-	}
-	public void setSymbol(char symbol) {
-		this.symbol = symbol;
-	}
+	public char getSymbol() { return symbol; }
+	public void setSymbol(char symbol) { this.symbol = symbol; }
+	public TileType getType() { return type; }
+	public void setType(TileType type) { this.type = type; }
 	public Room getRoom() {
 		return room;
 	}
