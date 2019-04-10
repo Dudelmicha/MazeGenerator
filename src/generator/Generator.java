@@ -18,8 +18,11 @@ public class Generator {
 		Level map = new Level(width, height);
 
 		roomGenerator.generateRooms(map, rand);
+		map.printMap();
 		doorGenerator.generateDoors(map, rand);
+		map.printMap();
 		passageGenerator.generatePassages(map, rand);
+		map.printMap();
 
 		return map;
 	}

@@ -1,3 +1,4 @@
+import generator.Generator;
 import level.Level;
 
 public class Main {
@@ -5,11 +6,8 @@ public class Main {
 
 
 	public static void main(String[] args) {
-		GeneratorWithoutDoors generator = new GeneratorWithoutDoors();
-		
-		Level map = generator.createEmptyMap();
-		generator.fillMap(map);
-		generator.printMap(map);
+		Generator generator = new Generator();
+		Level map = generator.generate(60, 40);
 		MainWindow mw = new MainWindow(generator, map);
 	}
 

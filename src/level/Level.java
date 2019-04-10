@@ -9,8 +9,8 @@ public class Level {
 	private Tile[][] m;
 	private List<Room> rooms = new ArrayList<Room>();
 
-	public int width() { return m.length; }
-	public int height() { return m[0].length; }
+	public int width() { return m[0].length; }
+	public int height() { return m.length; }
 	public Tile tile(Coordinate c) { return m[c.y][c.x]; }
 
 	// data encapsulation!?
@@ -81,4 +81,16 @@ public class Level {
 		addRoom(new Room(this, w, h, t, u));
 	}
 
+	
+	public void printMap() {
+		System.out.println("--------------");
+		for (int y = 0; y < height(); y++) {
+			for (int x = 0; x < width(); x++) {
+				char c = getM()[y][x].getSymbol();
+				System.out.print(c);
+				if (x == width() - 1)
+					System.out.print("\n");
+			}
+		}	
+	}
 }

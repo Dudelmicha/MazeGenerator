@@ -23,7 +23,7 @@ public class CaveGenerator implements IRoomGenerator {
 		//check if the room would match
 		for (int y = u - 1; y < u + h + 2; y++) {
 			for (int x = t - 1; x < t + w + 2; x++) {
-				if (m[y][x].getType() == TileType.Floor)
+				if (m[y][x].isTileType(TileType.Floor))
 					return;
 			}
 		}
@@ -34,7 +34,7 @@ public class CaveGenerator implements IRoomGenerator {
 				for (int x = t - 1; x < t + w + 2; x++) {
 					int s2 = (x < t || x > t + w) ? 1 : 0;
 					int t2 = (y < u || y > u + h) ? 1 : 0;
-					if (((s2 ^ t2) != 0) && m[y][x].getType() == TileType.Wall) {
+					if (((s2 ^ t2) != 0) && m[y][x].isTileType(TileType.Wall)) {
 						d++;
 						if (rand.nextInt(d) == 0) {
 							doorPos.add(new int[] {x,y});
@@ -65,8 +65,9 @@ public class CaveGenerator implements IRoomGenerator {
 				else
 				{
 					m[y][x].setType(TileType.Floor);
+					curRoom.addTile(m[y][x]);
 				}
-				curRoom.addWall(m[y][x]);
+				m[y][x].setRoom(curRoom);
 			}
 		}
 

@@ -75,8 +75,8 @@ public class MichasPassageGenerator implements IPassageGenerator {
 		Tile endTile = endRoom.getTiles().get(rand.nextInt(endRoom.getTiles().size()));
 		List<Tile> way = getWay(map, startTile, endTile, true);
 		List<Tile> way2 = getWay(map, startTile, endTile, false);
-		long wallCrossings = way.stream().filter(x -> x.getType() == TileType.Wall).count();
-		long wallCrossings2 = way2.stream().filter(x -> x.getType() == TileType.Wall).count();
+		long wallCrossings = way.stream().filter(x -> x.isTileType(TileType.Wall)).count();
+		long wallCrossings2 = way2.stream().filter(x -> x.isTileType(TileType.Wall)).count();
 		//debug
 		//way.stream().forEach(x -> x.setSymbol('H'));
 		//way2.stream().forEach(x -> x.setSymbol('V'));
@@ -85,7 +85,7 @@ public class MichasPassageGenerator implements IPassageGenerator {
 		{
 			way=way2;
 		}
-		way.removeIf(x -> x.getType()== TileType.Floor);
+		way.removeIf(x -> x.isTileType(TileType.Floor));
 		boolean outside = false;
 		List<Tile> newRoomTiles = new ArrayList<Tile>();
 		Room newRoom = new Room(map);
@@ -93,7 +93,7 @@ public class MichasPassageGenerator implements IPassageGenerator {
 		for (Tile tile : way) {
 			newRoomTiles.add(tile);
 			tile.setType(TileType.Floor);
-			if(tile.getType()==TileType.Wall)
+			if(tile.isTileType(TileType.Wall))
 			{
 				if(outside)
 				{
@@ -127,9 +127,9 @@ public class MichasPassageGenerator implements IPassageGenerator {
 					tile.getNeighbours()
 							.forEach(
 									neighbour -> {
-										neighbour.setType(neighbour.getType()==TileType.None?TileType.Wall:neighbour.getType());
-										if(neighbour.getType()==TileType.Wall)
+										if(neighbour.isTileType(TileType.None) || neighbour.isTileType(TileType.Wall))
 										{
+											neighbour.setType(TileType.Wall);
 											newWalls.add(neighbour);
 											neighbour.setRoom(newRoom);
 										}

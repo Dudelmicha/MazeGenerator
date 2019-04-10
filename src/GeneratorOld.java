@@ -1,18 +1,19 @@
 import level.Level;
 import level.Room;
 import level.Tile;
+import level.TileType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 //This Generator iss derived from Link: https://gist.github.com/munificent/b1bcd969063da3e6c298be070a22b604
-public class Generator {
+public class GeneratorOld {
 	final static int H = 40;
 	final static int W = 80;
 	final static Random rand = new Random();
 	
-	public Generator() {
+	public GeneratorOld() {
 		
 	}
 
@@ -33,7 +34,7 @@ public class Generator {
 			//check if the room would match
 			for (int y = u - 1; y < u + h + 2; y++) {
 				for (int x = t - 1; x < t + w + 2; x++) {
-					if (m[y][x].getSymbol() == '.' )
+					if (m[y][x].isTileType(TileType.Floor))
 						return;
 				}
 			}
@@ -44,7 +45,7 @@ public class Generator {
 					for (int x = t - 1; x < t + w + 2; x++) {
 						int s2 = (x < t || x > t + w) ? 1 : 0;
 						int t2 = (y < u || y > u + h) ? 1 : 0;
-						if (((s2 ^ t2) != 0) && m[y][x].getSymbol() == '#') {
+						if (((s2 ^ t2) != 0) && m[y][x].isTileType(TileType.Wall)) {
 							d++;
 							if (g(d) == 0) {
 								doorPos.add(new int[] {x,y});
@@ -73,17 +74,17 @@ public class Generator {
 					int t2 = (y < u || y > u + h) ? 1 : 0;
 					if( (s2 ^ t2) != 0 )
 					{
-						m[y][x].setSymbol('#');
+						m[y][x].setType(TileType.Wall);
 						curRoom.addWall(m[y][x] );
 					}
 					else if( (s2 & t2) != 0 )
 					{
-						m[y][x].setSymbol('!');
+						m[y][x].setType(TileType.Door);
 						curRoom.addWall(m[y][x] );
 					}
 					else 
 					{
-						m[y][x].setSymbol('.');
+						m[y][x].setType(TileType.Floor);
 					}
 					curRoom.addWall(m[y][x]);
 				}

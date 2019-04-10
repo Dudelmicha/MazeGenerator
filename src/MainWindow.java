@@ -13,12 +13,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import generator.Generator;
+
 public class MainWindow {
 	private JFrame frame;
 	private JPanel mainPanel;
 	private JScrollPane mapView;
 	private Level currentMap;
-	public MainWindow(GeneratorWithoutDoors generator, Level map) {
+	public MainWindow(Generator generator, Level map) {
 		currentMap = map;
 		mapView = createMapView(currentMap); 
 		mainPanel = new JPanel(new GridLayout(1, 1));
@@ -29,9 +31,7 @@ public class MainWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainPanel.removeAll();
-				currentMap = new Level(currentMap.getM(), currentMap.getRooms().stream().filter(x -> x.isMarked()));
-				generator.fillMap(currentMap);
-				generator.printMap(currentMap);
+				currentMap = generator.generate(60, 40);
 				mapView = createMapView(currentMap); 
 				mainPanel.add(mapView,0,0);
 				mainPanel.doLayout();

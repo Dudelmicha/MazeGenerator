@@ -2,6 +2,7 @@ import algorithm.Union;
 import level.Level;
 import level.Room;
 import level.Tile;
+import level.TileType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class GeneratorWithoutDoors {
 		//check if the room would match
 		for (int y = u - 1; y < u + h + 2; y++) {
 			for (int x = t - 1; x < t + w + 2; x++) {
-				if (m[y][x].getSymbol() == '.' )
+				if (m[y][x].isTileType(TileType.Floor))
 					return;
 			}
 		}
@@ -76,17 +77,17 @@ public class GeneratorWithoutDoors {
 				int t2 = (y < u || y > u + h) ? 1 : 0;
 				if( (s2 ^ t2) != 0 )
 				{
-					m[y][x].setSymbol('#');
+					m[y][x].setType(TileType.Wall);
 					curRoom.addWall(m[y][x] );
 				}
 				else if( (s2 & t2) != 0 )
 				{
-					m[y][x].setSymbol('!');
+					m[y][x].setType(TileType.Door);
 					curRoom.addWall(m[y][x] );
 				}
 				else 
 				{
-					m[y][x].setSymbol('.');
+					m[y][x].setType(TileType.Floor);
 				}
 				curRoom.addWall(m[y][x]);
 				m[y][x].setRoom(curRoom);
@@ -167,7 +168,7 @@ public class GeneratorWithoutDoors {
 					roomUnions.remove(r2);
 					roomUnions.add(r1.unite(r2));
 					Tile newDoor = sharedWalls.get(g(sharedWalls.size()));
-					newDoor.setSymbol('T');
+					newDoor.setType(TileType.Door);
 					List<Tile> neighbours = newDoor.getNeighbours();
 					neighbours.forEach(x -> x.getRoom().addDoor(newDoor));
 				}
@@ -261,8 +262,7 @@ public class GeneratorWithoutDoors {
 		
 		for (Tile tile : way) {
 			newRoomTiles.add(tile);
-			tile.setSymbol('W');
-			if(tile.getSymbol()=='#')
+			if(tile.isTileType(TileType.Wall))
 			{
 				if(outside)
 				{					
@@ -296,9 +296,9 @@ public class GeneratorWithoutDoors {
 					tile.getNeighbours()
 						.forEach(
 								neighbour -> {
-									neighbour.setSymbol(neighbour.getSymbol()==' '?'#':neighbour.getSymbol());
-									if(neighbour.getSymbol()=='#')
+									if(neighbour.isTileType(TileType.Wall)||neighbour.isTileType(TileType.None))
 									{
+										neighbour.setType(TileType.Wall);
 										newWalls.add(neighbour);
 										neighbour.setRoom(newRoom);
 									}

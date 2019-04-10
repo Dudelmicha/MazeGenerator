@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tile {
-	private char symbol; // pfui
 	private TileType type;
 	private int x;
 	private int y;
@@ -16,7 +15,6 @@ public class Tile {
 		this.map = m;
 		this.x = x;
 		this.y = y;
-		this.symbol=' ';
 		this.type = TileType.None;
 	}
 
@@ -45,9 +43,6 @@ public class Tile {
 	public void setY(int y) {
 		this.y = y;
 	}
-	public char getSymbol() { return symbol; }
-	public void setSymbol(char symbol) { this.symbol = symbol; }
-	public TileType getType() { return type; }
 	public void setType(TileType type) { this.type = type; }
 	public Room getRoom() {
 		return room;
@@ -83,10 +78,26 @@ public class Tile {
 		return neighbours;
 	}
 	
-	
-	
-	public Integer getDistance(Tile door2) {
-		return Math.abs(getX()-door2.getX()) + Math.abs(getY()-door2.getY());
+	public boolean isTileType(TileType type) {
+		return this.type == type;
 	}
+
+	public char getSymbol() {
+		switch (type) {
+		case Door:
+			return 'T';
+		case Floor:
+			return '.';
+		case None:
+			return ' ';
+		case Wall:
+			return '#';
+		default:
+			return '?';
+		}
+	}
+	
+	
+	
 	
 }
