@@ -25,7 +25,7 @@ public class MainWindow {
 		mapView = createMapView(currentMap); 
 		mainPanel = new JPanel(new GridLayout(1, 1));
 		mainPanel.add(mapView,0,0);
-		JButton nextFloor = new JButton("nex tFloor");
+		JButton nextFloor = new JButton("next Floor");
 		nextFloor.addActionListener(new ActionListener() {
 			
 			@Override

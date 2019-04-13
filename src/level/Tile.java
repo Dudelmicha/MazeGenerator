@@ -43,6 +43,7 @@ public class Tile {
 	public void setY(int y) {
 		this.y = y;
 	}
+	public TileType getType() { return this.type; }
 	public void setType(TileType type) { this.type = type; }
 	public Room getRoom() {
 		return room;

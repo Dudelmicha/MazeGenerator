@@ -12,6 +12,7 @@ public class Level {
 	public int width() { return m[0].length; }
 	public int height() { return m.length; }
 	public Tile tile(Coordinate c) { return m[c.y][c.x]; }
+	public Tile tile(int x, int y) { return m[y][x]; }
 
 	// data encapsulation!?
 	public Tile[][] getM() {
