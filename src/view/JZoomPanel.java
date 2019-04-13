@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 
 public class JZoomPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
@@ -14,26 +16,23 @@ public class JZoomPanel extends JPanel implements MouseListener, MouseMotionList
 	@Override public void mouseExited(MouseEvent mouseEvent) { }
 	@Override public void mouseDragged(MouseEvent mouseEvent) {
 		if (drag) {
-			transform.translate(mouseEvent.getX() - pos.x, mouseEvent.getY() - pos.y);
-
-			/// TODO: make nice! (fix borders for zoom and call transform.translate() only one time)
-			Dimension preferred = getPreferredSize();
-			float w2 = (preferred.width - getWidth()) * 0.5f;
-			if (transform.getTranslateX() < -w2) transform.translate(-w2-transform.getTranslateX(),0);
-			else if (transform.getTranslateX() > w2) transform.translate(w2-transform.getTranslateX(), 0);
-
-			float h = preferred.height - getHeight();
-			if (transform.getTranslateY() > 0) transform.translate(0, -transform.getTranslateY());
-			else if (transform.getTranslateY() < -h) transform.translate(0, -h-transform.getTranslateY());
-
+			transform.translate((mouseEvent.getX() - pos.x)/transform.getScaleX(), (mouseEvent.getY() - pos.y)/transform.getScaleY());
 			pos = mouseEvent.getPoint();
 			repaint();
 		}
 	}
-	@Override public void mouseMoved(MouseEvent mouseEvent) { }
+	@Override public void mouseMoved(MouseEvent mouseEvent) { pos = mouseEvent.getPoint(); }
 	@Override public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
-		float s = 1 + mouseWheelEvent.getWheelRotation() * 0.01f;
-		transform.scale(s,s);
+		float s = 1 + mouseWheelEvent.getWheelRotation() * -0.01f;
+
+		try {
+			Point2D offset = transform.inverseTransform(pos, null);
+			transform.scale(s,s);
+			Point2D dst = transform.inverseTransform(pos, null);
+			transform.translate(dst.getX()-offset.getX(), dst.getY()-offset.getY());
+		} catch (NoninvertibleTransformException e) {
+			e.printStackTrace();
+		}
 		repaint();
 	}
 
@@ -51,7 +50,7 @@ public class JZoomPanel extends JPanel implements MouseListener, MouseMotionList
 		Graphics2D g = (Graphics2D)graphics;
 		g.setColor(Color.WHITE);
 		g.fillRect(0,0, getWidth(), getHeight());
-
+		
 		AffineTransform t = g.getTransform();
 		g.setTransform(transform);
 
@@ -62,6 +61,7 @@ public class JZoomPanel extends JPanel implements MouseListener, MouseMotionList
 
 	public void resetViewport() {
 		transform.setToTranslation(0,0);
+		transform.setToScale(1,1);
 		repaint();
 	}
 
