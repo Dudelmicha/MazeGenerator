@@ -3,3 +3,4 @@ target/
 bin\
 target\
 *.class
+*.class

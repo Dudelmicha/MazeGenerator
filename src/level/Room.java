@@ -77,4 +77,12 @@ public class Room {
 	public ArrayList<Tile> getTiles() {
 		return tiles;
 	}
+	
+	public Set<Tile> getAllTiles() {
+		HashSet<Tile> tiles = new HashSet<Tile>();
+		tiles.addAll(getDoors());
+		tiles.addAll(getTiles());
+		tiles.addAll(getWalls());
+		return tiles;
+	}
 }

@@ -7,6 +7,7 @@ import level.Tile;
 import level.TileType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -25,54 +26,54 @@ public class SimpleDoorGenerator implements IDoorGenerator {
 	public void generateDoors(Level map, Random rand) {
 		Tile[][] m = map.getM();
 		List<Union<Room>> roomUnions = map.getRooms().stream().map(x -> new Union<Room>(x)).collect(Collectors.toList());
-		int generation = 0;
-		int retry = 0;
-		while(roomUnions.size()>1)
+		int mergeSkips = 0;
+		M1: while(roomUnions.size()>1)
 		{
-			generation++;
 			Union<Room> r1 = roomUnions.get(rand.nextInt(roomUnions.size()));
 			Union<Room> r2 = roomUnions.get(rand.nextInt(roomUnions.size()));
 			if(r1.getRoot() != r2.getRoot()) { //merge
-				List<Tile> sharedWalls = new ArrayList<Tile>();
 				for (Room room1 : r1.getAllT()) {
-					for(Tile wall1 : room1.getWalls()) {
+					List<Tile> walls1 = new ArrayList<Tile>(room1.getWalls());
+					Collections.shuffle(walls1);
+					for(Tile tile1 : walls1) {
 						for (Room room2 : r2.getAllT()) {
-							sharedWalls.addAll(room2.getWalls().stream()
-									.filter(
-											x -> x.equals(wall1)
-													&& neighbourIs(m, x.getY(), x.getX(), TileType.Floor) > 1
-													&& x.isTileType(TileType.Wall))
-									.collect(Collectors.toList()));
+							List<Tile> walls2 = new ArrayList<Tile>(room2.getWalls());
+							Collections.shuffle(walls2);
+							for(Tile tile2 : walls2) {
+								boolean f1 =tile1.getNeighbours().stream().filter(x -> x.isTraversable()).count()>1;
+								boolean f2 =tile2.getNeighbours().stream().filter(x -> x.isTraversable()).count()>1;
+								
+								boolean f3 =tile1.getNeighbours().stream().allMatch(x -> x.getRoom()==room1 || x.getRoom()==room2);
+								boolean f4 =tile2.getNeighbours().stream().allMatch(x -> x.getRoom()==room1 || x.getRoom()==room2);
+								
+								if(f1&&f2&&f3&&f4&&(tile1==tile2||tile1.getNeighbours().contains(tile2)||tile2.getNeighbours().contains(tile1)))
+								{
+									if(!tile1.isTraversable())
+									{										
+										tile1.setType(TileType.Door);
+									}
+									if(!tile2.isTraversable())
+									{										
+										tile2.setType(TileType.Door);
+									}
+									roomUnions.add(r1.unite(r2));
+									roomUnions.remove(r1);
+									roomUnions.remove(r2);
+									mergeSkips=0;
+									continue M1;
+								}
+							}	
 						}
-					}
-				}
-				if(!sharedWalls.isEmpty()) {
-					roomUnions.remove(r1);
-					roomUnions.remove(r2);
-					roomUnions.add(r1.unite(r2));
-					Tile newDoor = sharedWalls.get(rand.nextInt(sharedWalls.size()));
-					newDoor.setType(TileType.Door);
-					List<Tile> neighbours = newDoor.getNeighbours();
-					neighbours.stream().filter(x->x.getRoom()!=null).forEach(x -> x.getRoom().addDoor(newDoor));
-					retry = 0;
-				}
-				else //try to merge with other stuff than
-				{
-					roomUnions.remove(r1);
-					roomUnions.add(r1); //add on the end
-					retry++;
-					if(retry>roomUnions.size()) {
-						//no more progress;
-						break;
-					}
+					}	
 				}
 			}
-			else //should have been merged
-			{
-				roomUnions.remove(r1);
-				roomUnions.remove(r2);
-				roomUnions.add(r1.unite(r2));
+			if(mergeSkips > roomUnions.size()*roomUnions.size()) {
+				break;
 			}
+			mergeSkips++;
+			//push back r1
+			roomUnions.remove(r1); 
+			roomUnions.add(r1);
 		}
 	}
 }

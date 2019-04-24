@@ -8,6 +8,9 @@ import level.TileType;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import algorithm.AStar;
+import algorithm.Distancies;
+
 public class MichasPassageGenerator implements IPassageGenerator {
 
 	private List<Tile> getWay(Level map, Tile startTile, Tile endTile, boolean horizontalFirst) {
@@ -152,53 +155,38 @@ public class MichasPassageGenerator implements IPassageGenerator {
 
 	@Override
 	public void generatePassages(Level map, Random rand) {
-/*		boolean waysAdded = false;
+		boolean waysAdded = false;
 		M1:do
 		{
-			GraphBuilder<Tile, Integer> builder = GraphBuilder.<Tile,Integer>create();
 			Set<Tile> allDoors = new HashSet<Tile>();
 			for (Room room : map.getRooms()) {
 				Set<Tile> passages = room.getDoors();
 				allDoors.addAll(passages);
-				for (Tile door : passages) {
-					for (Tile door2 : passages) {
-						if(door != door2)
-						{
-							builder.connect(door).to(door2).withEdge(door.getDistance(door2));
-						}
-					}
-				}
 			}
 
-			HipsterGraph<Tile, Integer> graph = builder.createUndirectedGraph();
 
 			waysAdded = false;
 			for (Tile door : allDoors) {
-				SearchProblem<Integer, Tile, WeightedNode<Integer, Tile, Double>> p = GraphSearchProblem
-                        .startingFrom(door)
-                        .in(graph)
-                        .takeCostsFromEdges()
-                        .build();
+				
 					for (Tile door2 : allDoors) {
 					if(door != door2) {
 
-		                Algorithm<Integer, Tile, WeightedNode<Integer, Tile, Double>>.SearchResult result = Hipster.createAStar(p).search(door2);
-
-		                int directWayFCost = door.getDistance(door2);
-		                if(result.getGoalNode().getCost() > directWayFCost*2 && directWayFCost > 10) {
+						int indirectWay = AStar.distance(map, door, door2);
+		                int directWayFCost = Distancies.manhatten(door, door2);
+		                if(indirectWay > directWayFCost*2 && directWayFCost > 10) {
 		                	System.out.println("directWayFCost"+directWayFCost*3);
-		                	System.out.println("indirectWayFCost"+(int)Math.round(result.getGoalNode().getCost()));
+		                	System.out.println("indirectWayFCost"+indirectWay);
 
 		                	waysAdded = true;
 		                	Room newFloor = buildWay(map,door,door2,rand);
+		                	map.printMap();
 		                	continue M1;
 		                }
 					}
 				}
 			}
-			graph = builder.createUndirectedGraph();
 		}
 		while(waysAdded);
-*/
+
 	}
 }
