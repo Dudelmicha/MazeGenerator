@@ -1,12 +1,10 @@
 import generator.Generator;
-import level.Level;
 import view.JLevelView;
 import view.JZoomPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 public class MazeApp {
 	static JLevelView levelView;
@@ -23,6 +21,7 @@ public class MazeApp {
 
 		zoomPanel = new JZoomPanel();
 		zoomPanel.add(levelView);
+
 		frame.add(zoomPanel, BorderLayout.CENTER);
 
 		controlPanel = new JPanel(new GridLayout());
@@ -36,8 +35,8 @@ public class MazeApp {
 		controlPanel.add(createLevelButton);
 
 		frame.add(controlPanel, BorderLayout.EAST);
-
 		frame.setVisible(true);
+		zoomPanel.setZoomToFit(levelView.getPreferredSize());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	}

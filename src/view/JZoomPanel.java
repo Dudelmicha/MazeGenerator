@@ -50,7 +50,7 @@ public class JZoomPanel extends JPanel implements MouseListener, MouseMotionList
 		Graphics2D g = (Graphics2D)graphics;
 		g.setColor(Color.WHITE);
 		g.fillRect(0,0, getWidth(), getHeight());
-		
+
 		AffineTransform t = g.getTransform();
 		g.setTransform(transform);
 
@@ -63,6 +63,15 @@ public class JZoomPanel extends JPanel implements MouseListener, MouseMotionList
 		transform.setToTranslation(0,0);
 		transform.setToScale(1,1);
 		repaint();
+	}
+
+	public void setZoomToFit(Dimension d) {
+		double xZoom = getParent().getSize().width / d.getWidth();
+		double yZoom = getParent().getSize().height / d.getHeight();
+
+		double s = Math.min(xZoom, yZoom);
+		transform.setToScale(s,s);
+		transform.translate(s*d.getWidth()*2/3, -5);
 	}
 
 	final AffineTransform transform = new AffineTransform();
