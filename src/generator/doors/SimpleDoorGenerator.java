@@ -56,6 +56,10 @@ public class SimpleDoorGenerator implements IDoorGenerator {
 									{										
 										tile2.setType(TileType.Door);
 									}
+									tile1.getRoom().addDoor(tile1);
+									tile1.getRoom().addDoor(tile2);
+									tile2.getRoom().addDoor(tile1);
+									tile2.getRoom().addDoor(tile2);
 									roomUnions.add(r1.unite(r2));
 									roomUnions.remove(r1);
 									roomUnions.remove(r2);

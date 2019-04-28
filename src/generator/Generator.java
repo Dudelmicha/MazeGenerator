@@ -3,6 +3,7 @@ package generator;
 import generator.doors.IDoorGenerator;
 import generator.doors.SimpleDoorGenerator;
 import generator.passages.IPassageGenerator;
+import generator.passages.MichasDoubleWallPassageGenerator;
 import generator.passages.MichasPassageGenerator;
 import generator.rooms.CaveGenerator;
 import generator.rooms.IRoomGenerator;
@@ -30,5 +31,5 @@ public class Generator {
 	private Random rand;
 	private IRoomGenerator roomGenerator = new CaveGenerator();
 	private IDoorGenerator doorGenerator = new SimpleDoorGenerator();
-	private IPassageGenerator passageGenerator = new MichasPassageGenerator();
+	private IPassageGenerator passageGenerator = new MichasDoubleWallPassageGenerator();
 }

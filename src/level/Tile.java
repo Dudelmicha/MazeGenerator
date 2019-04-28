@@ -2,6 +2,8 @@ package level;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class Tile {
 	private TileType type;
@@ -62,6 +64,9 @@ public class Tile {
 		
 	}
 	
+	public Stream<Tile> getNeighbours(Predicate<Tile> p) {
+		return getNeighbours().stream().filter(p);
+	}
 	public List<Tile> getNeighboursDiagonal() {
 		List<Tile> neighbours = new ArrayList<Tile>();
 		Tile[][] m = this.map.getM(); 

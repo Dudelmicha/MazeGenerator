@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import algorithm.AStar;
+import algorithm.BFSSearch;
 import algorithm.Distancies;
 
 public class MichasPassageGenerator implements IPassageGenerator {
@@ -95,7 +96,6 @@ public class MichasPassageGenerator implements IPassageGenerator {
 
 		for (Tile tile : way) {
 			newRoomTiles.add(tile);
-			tile.setType(TileType.Floor);
 			if(tile.isTileType(TileType.Wall))
 			{
 				if(outside)
@@ -167,13 +167,16 @@ public class MichasPassageGenerator implements IPassageGenerator {
 
 			waysAdded = false;
 			for (Tile door : allDoors) {
-				
+					int[][] distances = BFSSearch.distances(map, door);
 					for (Tile door2 : allDoors) {
 					if(door != door2) {
 
-						int indirectWay = AStar.distance(map, door, door2);
+						int indirectWay = BFSSearch.distanceLookup(map, distances, door2); 
 		                int directWayFCost = Distancies.manhatten(door, door2);
-		                if(indirectWay > directWayFCost*2 && directWayFCost > 10) {
+		                if(indirectWay == 0 //no way
+		                	||	
+		                		(indirectWay > directWayFCost*2 
+		                		&& directWayFCost > 10)) {
 		                	System.out.println("directWayFCost"+directWayFCost*3);
 		                	System.out.println("indirectWayFCost"+indirectWay);
 
