@@ -85,4 +85,33 @@ public class Room {
 		tiles.addAll(getWalls());
 		return tiles;
 	}
+	public void ToJSON(StringBuffer buffer) {
+		buffer.append("{");
+		buffer.append("\"W\":\""+w+"\",");
+		buffer.append("\"H\":\""+h+"\",");
+		buffer.append("\"T\":\""+t+"\",");
+		buffer.append("\"U\":\""+u+"\",");
+		buffer.append("\"Walls\":[");
+		for(Tile wall : walls) {
+			wall.toJSON(buffer);
+			if(walls.get(walls.size()-1)!=wall)buffer.append(",");
+		}
+		buffer.append("],\r\n");
+		buffer.append("\"Doors\":[");
+		int doorCount = 0;
+		for(Tile door : doors) {
+			door.toJSON(buffer);
+			doorCount++;
+			if(doorCount<doors.size())buffer.append(",");
+		}
+		buffer.append("],\r\n");
+		buffer.append("\"Tiles\":[");
+		for(Tile tile : tiles) {
+			tile.toJSON(buffer);
+			if(tiles.get(tiles.size()-1)!=tile)buffer.append(",");
+			
+		}
+		buffer.append("]\r\n");
+		buffer.append("}");
+	}
 }

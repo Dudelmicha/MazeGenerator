@@ -102,7 +102,23 @@ public class Tile {
 			return '?';
 		}
 	}
-	
+
+	public void makeSimpleDoor(Tile actualEndTile, Room startRoom, Room endRoom) {
+		setType(TileType.Door);
+		setRoom(startRoom);
+		actualEndTile.setRoom(endRoom);
+		startRoom.addDoor(this);
+		endRoom.addDoor(this);
+	}
+
+	public void toJSON(StringBuffer buffer) {
+		buffer.append("{");
+		buffer.append("\"X\":\""+x+"\",");
+		buffer.append("\"Y\":\""+y+"\",");
+		buffer.append("\"Type\":\""+type.ordinal()+"\"");
+		buffer.append("}");
+	}
+
 	
 	
 	

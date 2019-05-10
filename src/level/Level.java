@@ -94,4 +94,29 @@ public class Level {
 			}
 		}	
 	}
+	
+	public String toJSON()
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("{\"Width\" : "+width()+",\r\n");
+		buffer.append("\"Height\" : "+height()+",\r\n");
+		buffer.append("\"Rooms\" : [");
+		for(Room room : this.rooms)
+		{
+			room.ToJSON(buffer);
+			if(rooms.get(rooms.size()-1)!=room)buffer.append(",");
+		}
+		buffer.append("],\"Tiles\" :[");
+		for (int y = 0; y < height(); y++) {
+			buffer.append("[");
+			for (int x = 0; x < width(); x++) {
+				m[y][x].toJSON(buffer);
+				if(x<width()-1) buffer.append(",");	
+			}
+			buffer.append("]\r\n");
+			if(y<height()-1) buffer.append(",");
+		}
+		buffer.append("]}\r\n");
+		return buffer.toString();
+	}
 }

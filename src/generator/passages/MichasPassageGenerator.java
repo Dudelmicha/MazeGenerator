@@ -7,6 +7,7 @@ import level.TileType;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import algorithm.AStar;
 import algorithm.BFSSearch;
@@ -81,76 +82,56 @@ public class MichasPassageGenerator implements IPassageGenerator {
 		List<Tile> way2 = getWay(map, startTile, endTile, false);
 		long wallCrossings = way.stream().filter(x -> x.isTileType(TileType.Wall)).count();
 		long wallCrossings2 = way2.stream().filter(x -> x.isTileType(TileType.Wall)).count();
-		//debug
-		//way.stream().forEach(x -> x.setSymbol('H'));
-		//way2.stream().forEach(x -> x.setSymbol('V'));
-		//System.out.println(wallCrossings+"-"+wallCrossings2);
 		if(wallCrossings2<wallCrossings)
 		{
 			way=way2;
 		}
-		way.removeIf(x -> x.isTileType(TileType.Floor));
-		boolean outside = false;
-		List<Tile> newRoomTiles = new ArrayList<Tile>();
-		Room newRoom = new Room(map);
-
-		for (Tile tile : way) {
-			newRoomTiles.add(tile);
-			if(tile.isTileType(TileType.Wall))
+		Room room = new Room(map);
+		List<Tile> outer = way.stream().filter(x -> !x.isTraversable()).collect(Collectors.toList());
+		Tile prev = outer.get(0);
+		for(int start=1; start<outer.size(); start++)
+		{
+			Tile cur = outer.get(start);
+			Stream<Tile> prevOuters = prev.getNeighbours(x->x.isTileType(TileType.None));
+			Stream<Tile> curOuters = cur.getNeighbours(x->x.isTileType(TileType.None));
+			if(prevOuters.findAny().isPresent() && curOuters.findAny().isPresent())
 			{
-				if(outside)
-				{
-					break;
-				}
-				else
-				{
-					outside = true;
-				}
+				room.addTile(cur);
+				cur.setType(TileType.Floor);
+
 			}
+			prev = cur;
 		}
-		Set<Room> connectedRooms = way.stream().flatMap(x->x.getNeighbours().stream().map(y -> y.getRoom())).collect(Collectors.toSet());
-		connectedRooms.removeIf(x->x == null);
-		if(connectedRooms.size()<2) {
-			return null;
+		
+		
+		for(Tile t : room.getTiles())
+		{
+			//change all neighbour None's to Walls
+			for(Tile n : t.getNeighbours(x->!x.isTraversable()).collect(Collectors.toList()))
+			{
+				n.setType(TileType.Wall);
+				room.addWall(n);
+			}			
 		}
-		List<Tile> newWalls = new ArrayList<Tile>();
-		//retrieve actual startroom (might have stopped early, because of other room in between
-		Tile startDoor = newRoomTiles.get(0);
-		Tile endDoor = newRoomTiles.get(newRoomTiles.size()-1);
-		List<Tile> startRoomTiles = startDoor.getNeighbours();
-		List<Tile> endRoomTiles = endDoor.getNeighbours();
-		startRoomTiles.removeIf(x -> x.getRoom() == null);
-		endRoomTiles.removeIf(x -> x.getRoom() == null);
-		startRoom = startRoomTiles.get(0).getRoom();
-		endRoom = endRoomTiles.get(0).getRoom();
+		Tile firstRoomTile = room.getTiles().get(0);
+		Tile lastRoomTile = room.getTiles().get(room.getTiles().size()-1);
+		Optional<Tile> actualStartTileOpt = firstRoomTile.getNeighbours(x->x.getRoom()!=null).findFirst();
+		Optional<Tile> actualEndTileOpt = lastRoomTile.getNeighbours(x->x.getRoom()!=null).findFirst();
+		
+		if(actualStartTileOpt.isPresent() && actualEndTileOpt.isPresent())
+		{
+			Tile actualStartTile = actualStartTileOpt.get();
+			Tile actualEndTile = actualEndTileOpt.get();
+			actualStartTile.makeSimpleDoor(actualEndTile, actualStartTile.getRoom(), actualEndTile.getRoom());
+		}
+		else
+		{
+			System.out.println("This should not happen");
+		}
+		
+		map.addRoom(room);
+		return room;
 
-		newRoomTiles.forEach(
-				tile ->
-				{
-					tile.getNeighbours()
-							.forEach(
-									neighbour -> {
-										if(neighbour.isTileType(TileType.None) || neighbour.isTileType(TileType.Wall))
-										{
-											neighbour.setType(TileType.Wall);
-											newWalls.add(neighbour);
-											neighbour.setRoom(newRoom);
-										}
-									});
-					newRoom.addTile(tile);
-					tile.setRoom(newRoom);
-				});
-
-
-		newWalls.forEach(wall -> newRoom.addWall(wall));
-		newRoom.addDoor(startDoor);
-		newRoom.addDoor(endDoor);
-		startDoor.setRoom(newRoom);
-		endDoor.setRoom(newRoom);
-		startRoom.addDoor(startDoor);
-		endRoom.addDoor(endDoor);
-		map.addRoom(newRoom);
-		return newRoom;
 	}
 
 	@Override
@@ -163,7 +144,7 @@ public class MichasPassageGenerator implements IPassageGenerator {
 				Set<Tile> passages = room.getDoors();
 				allDoors.addAll(passages);
 			}
-
+			
 
 			waysAdded = false;
 			for (Tile door : allDoors) {
